@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/main.css">
+    <title>Movie Watcher</title>
+</head>
+
+<body style="-webkit-app-region: drag">
+    <div class="container">
+        <br>
+        <button class="addMovie" id="openNewWindowBtn">Add New Movie (⌘+N)</button>
+        <div class="row" id="to-watch">
+            <div>
+                <h2 class="heading">Movies To Watch</h2>
+            </div>
+        </div>
+        <div class="row" id="watched">
+            <div>
+                <h2 class="heading">Watched Movies</h2>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const electron = require("electron");
+        const { ipcRenderer } = electron;
+
+        let inputValue = document.querySelector("#value");
+        let openNewWindow = document.querySelector("#openNewWindowBtn");
+
+        openNewWindow.addEventListener("click", () => {
+            ipcRenderer.send("key:newWindow");
+        });
+
+    </script>
+    <script src="main.js"></script>
+    <script src="assets/mainWindow.js"></script>
+</body>
+
+</html>
