@@ -8,8 +8,9 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
+    "electron": "^9.2.0",
+    "electron-packager": "^15.0.0",
     "line-reader": "^0.4.0"
   }
 }

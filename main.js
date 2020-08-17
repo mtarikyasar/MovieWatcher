@@ -1,9 +1,9 @@
-const url = require("url");
-const path = require("path");
+const url = require('url');
+const path = require('path');
 const fs = require('fs');
 const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
 
-let mainWindow, addWindow;
+let mainWindow, addWindow, searchWindow;
 
 let watchedMovieCount, unwatchedMovieCount;
 
@@ -31,14 +31,14 @@ app.on('ready', () => {
 
     // New Window
     ipcMain.on("key:newWindow", () => {
-        createNewWindow();
+        createAddWindow();
     });
 
     mainWindow.on('close', () => {
         app.quit();
     });
 
-    // New Window Events
+    // Add Window Events
 
     ipcMain.on("addWindow:close", () => {
         addWindow.close();
@@ -84,7 +84,59 @@ app.on('ready', () => {
     ipcMain.on("key:movieCount", (err, unwatched, watched) =>{
         unwatchedMovieCount = unwatched;
         watchedMovieCount = watched;
-    })
+    });
+
+    // Search Window Events
+
+    ipcMain.on("searchWindow:close", () => {
+        searchWindow.close();
+        searchWindow = null;
+    });
+
+    ipcMain.on("searchWindow:search", (err, movie, director) => {
+        let found = false;
+
+        lineReader.eachLine(appDataFilePath, function (line, last) {
+            let res = line.split("#");
+
+            if (movie === res[0] && director === res[1]){
+                if (res[3] === true){
+                    const options = {
+                        buttons: ['Close'],
+                        message: `Movie '${movie} exists.\nAnd you watched it.'`,
+                    }
+
+                const msg = dialog.showMessageBox(null, options);
+                }
+
+                else{
+                    const options = {
+                        buttons: ['Close'],
+                        message: `Movie '${movie} exists.\nAnd you haven't watched it.'`,
+                    }
+
+                const msg = dialog.showMessageBox(null, options);
+                }
+                
+                console.log(msg);
+                found = true;
+            };
+        });
+
+        if (found === false){
+            const options = {
+                buttons: ['Close'],
+                message: `Movie '${movie}' doesn't exist on the list.`
+            }
+
+            const msg = dialog.showMessageBox(null, options);
+            console.log(msg);
+        }
+
+        searchWindow.close();
+        searchWindow = null;
+    });
+
 });
 
 const mainMenuTemplate = [
@@ -95,9 +147,23 @@ const mainMenuTemplate = [
                 label: "Add New Movie",
                 accelerator: process.platform == "darwin" ? "Command+N" : "Ctrl+N",
                 click(){
-                    createNewWindow();
+                    createAddWindow();
                 }
             },
+            
+            {
+                label: "Reload",
+                role: "reload"
+            },
+            {
+                label: "Quit",
+                role: "quit"
+            }
+        ]
+    },
+    {
+        label: "Tools",
+        submenu: [
             {
                 label: "Movie Count",
                 click(){
@@ -110,12 +176,17 @@ const mainMenuTemplate = [
                 }
             },
             {
-                label: "Reload",
-                role: "reload"
+                label: "Search Movie",
+                accelerator: process.platform == "darwin" ? "Command+F" : "Ctrl+F",
+                click(){
+                    createSearchWindow();
+                }
             },
             {
-                label: "Quit",
-                role: "quit"
+                label: "Delete Movie",
+                click(){
+
+                }
             }
         ]
     }
@@ -145,7 +216,7 @@ if (process.env.NODE_ENV !== "production"){
     )
 }
 
-function createNewWindow(){
+function createAddWindow(){
     addWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true
@@ -159,13 +230,37 @@ function createNewWindow(){
     addWindow.setResizable(false);
 
     addWindow.loadURL(url.format({
-        pathname: path.join(__dirname, "model.html"),
+        pathname: path.join(__dirname, "/html/addWindow.html"),
         protocol: "file:",
         slashes: true
     }));
 
     addWindow.on('close', () => {
         addWindow = null;
+    })
+}
+
+function createSearchWindow(){
+    searchWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true
+        },
+        width: 450,
+        height: 265,
+        title: "Search Movie",
+        titleBarStyle: "hiddenInset"
+    });
+
+    searchWindow.setResizable(false);
+
+    searchWindow.loadURL(url.format({
+        pathname: path.join(__dirname, "/html/searchWindow.html"),
+        protocol: "file:",
+        slashes: true
+    }));
+
+    searchWindow.on('close', () => {
+        searchWindow = null;
     })
 }
 
@@ -185,4 +280,8 @@ function getAppDataPath() {
             process.exit(1);
         }
     }
+}
+
+function searchMovie(){
+
 }

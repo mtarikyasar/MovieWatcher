@@ -1,0 +1,51 @@
+body{
+    background-color: rgb(33, 33, 33);
+}
+
+div.container {
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+}
+
+input[type=text]{
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    display: block;
+    font-size: 18px;
+    margin: 8px 0;
+    outline: none;
+    padding: 12px 20px;
+    width: 100%;
+}
+
+input[type=checkbox]{
+    margin: 30px 0 30px 0;
+    outline: none;
+    transform: scale(4);
+    width: 100%;
+}
+
+input[type=submit]{
+    background-color: rgb(179, 179, 179);
+    border: none;
+    border-radius: 4px;
+    color: black;
+    cursor: pointer;
+    font-size: 24px;
+    margin: 4px 0;
+    outline: none;
+    padding: 7px 10px;
+    text-align: center;
+    transition: .1s linear;
+    width: 50%;
+}
+
+#saveBtn:hover{
+    background-color: rgb(29, 185, 84);
+}
+
+#cancelBtn:hover{
+    background-color: rgb(255, 17, 0);
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/addMovie.css">
+    <title>Add Movie</title>
+</head>
+<body style="-webkit-app-region: drag">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-2 text-center add-movie">
+                <input type="text" id="movieName" placeholder="Movie Name">
+                <input type="text" id="directorName" placeholder="Director Name">
+                <input type="text" id="movieYear" placeholder="Release Date">
+                <input type="checkbox" id="read-sit">
+                <input type="submit" value="Add" id="saveBtn">
+                <input type="submit" value="Cancel" id="cancelBtn">
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const electron = require("electron");
+        const { ipcRenderer } = electron;
+
+        let cancelBtn = document.querySelector("#cancelBtn");
+        let saveBtn = document.querySelector("#saveBtn");
+
+        
+        let movieName = document.querySelector("#movieName");
+        let directorName = document.querySelector("#directorName");
+        let year = document.querySelector("#movieYear");
+        let readSit = document.querySelector("#read-sit");
+        
+        cancelBtn.addEventListener("click", () => {
+            ipcRenderer.send("addWindow:close");
+        });
+        
+        if(saveBtn){
+            saveBtn.addEventListener("click", () => {
+                ipcRenderer.send("addWindow:save", movieName.value, directorName.value, year.value, readSit.checked);
+            });
+        };
+    </script>
+</body>
+</html>
