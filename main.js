@@ -9,19 +9,21 @@ let watchedMovieCount, unwatchedMovieCount;
 
 app.on('ready', () => {
     console.log("Application is running...");
-    
+    let done = false; // For checking if search process
+    let found;
+
     mainWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true
         },
         frame: true,
     });
-    
+
     mainWindow.setResizable(false);
     mainWindow.loadURL(
         url.format({
             pathname: path.join(__dirname, "main.html"),
-            protocol:  "file:",
+            protocol: "file:",
             slashes: true
         })
     );
@@ -40,33 +42,33 @@ app.on('ready', () => {
 
     // Add Window Events
 
-    ipcMain.on("addWindow:close", () => {
+    ipcMain.on("addWindow:close", () => {
         addWindow.close();
         addWindow = null;
     });
 
-    ipcMain.on("mainWindow:reload", () => {
+    ipcMain.on("mainWindow:reload", () => {
         mainWindow.reload();
     });
 
-    ipcMain.on("addWindow:save", (err, movieName, directorName, year, cond) => {
+    ipcMain.on("addWindow:save", (err, movieName, directorName, year, cond) => {
         const appDataDirPath = getAppDataPath();
 
         //Create appDataDir if not exist
-        if (!fs.existsSync(appDataDirPath)){
+        if (!fs.existsSync(appDataDirPath)) {
             fs.mkdirSync(appDataDirPath);
         }
 
-        const appDataFilePath =path.join(appDataDirPath, 'movieList.txt');
+        const appDataFilePath = path.join(appDataDirPath, 'movieList.txt');
 
-        if(movieName || directorName){
+        if (movieName || directorName) {
             console.log(`Movie Name: ${movieName}\nDirector Name: ${directorName}\nRelease Year: ${year}`);
             let data = `${movieName}#${directorName}#${year}#${cond}\n`;
 
             fs.appendFile(appDataFilePath, data, (err) => {
                 if (err) {
                     console.log("There was a problem saving data.");
-                } else{
+                } else {
                     console.log("Data saved correctly.");
                 }
             });
@@ -81,7 +83,7 @@ app.on('ready', () => {
 
     // Movie Count
 
-    ipcMain.on("key:movieCount", (err, unwatched, watched) =>{
+    ipcMain.on("key:movieCount", (err, unwatched, watched) => {
         unwatchedMovieCount = unwatched;
         watchedMovieCount = watched;
     });
@@ -94,49 +96,58 @@ app.on('ready', () => {
     });
 
     ipcMain.on("searchWindow:search", (err, movie, director) => {
-        let found = false;
+        const lineReader = require('line-reader');
+        const appDataDirPath = getAppDataPath();
+        const appDataFilePath = path.join(appDataDirPath, 'movieList.txt');
 
         lineReader.eachLine(appDataFilePath, function (line, last) {
             let res = line.split("#");
+            let msg;
 
-            if (movie === res[0] && director === res[1]){
-                if (res[3] === true){
+            // Director parameter temporarily disabled
+            if (movie === res[0] || movie === res[0].toLowerCase()/* && director === res[1] */) {
+                if (res[3] === 'true') {
                     const options = {
                         buttons: ['Close'],
-                        message: `Movie '${movie} exists.\nAnd you watched it.'`,
+                        message: `Movie '${res[0]}' exists.\nAnd you watched it.`,
                     }
 
-                const msg = dialog.showMessageBox(null, options);
+                    msg = dialog.showMessageBox(null, options);
+                    done = true;
                 }
 
-                else{
+                else {
                     const options = {
                         buttons: ['Close'],
-                        message: `Movie '${movie} exists.\nAnd you haven't watched it.'`,
+                        message: `Movie '${res[0]}' exists.\nAnd you haven't watched it.`,
                     }
 
-                const msg = dialog.showMessageBox(null, options);
+                    msg = dialog.showMessageBox(null, options);
                 }
-                
-                console.log(msg);
+
                 found = true;
+                console.log(msg);
             };
         });
 
-        if (found === false){
-            const options = {
-                buttons: ['Close'],
-                message: `Movie '${movie}' doesn't exist on the list.`
-            }
-
-            const msg = dialog.showMessageBox(null, options);
-            console.log(msg);
+        if (found !== true){
+            found = false;
         }
 
+        done = true;
         searchWindow.close();
         searchWindow = null;
     });
 
+    if (done === true && found === false) {
+        const options = {
+            buttons: ['Close'],
+            message: `Movie doesn't exist on the list.`
+        }
+
+        const msg = dialog.showMessageBox(null, options);
+        console.log(msg);
+    }
 });
 
 const mainMenuTemplate = [
@@ -146,11 +157,11 @@ const mainMenuTemplate = [
             {
                 label: "Add New Movie",
                 accelerator: process.platform == "darwin" ? "Command+N" : "Ctrl+N",
-                click(){
+                click() {
                     createAddWindow();
                 }
             },
-            
+
             {
                 label: "Reload",
                 role: "reload"
@@ -166,7 +177,7 @@ const mainMenuTemplate = [
         submenu: [
             {
                 label: "Movie Count",
-                click(){
+                click() {
                     const options = {
                         buttons: ['Close'],
                         message: `You watched ${watchedMovieCount} movies.\nYou've got ${unwatchedMovieCount} movies to watch.`,
@@ -178,13 +189,13 @@ const mainMenuTemplate = [
             {
                 label: "Search Movie",
                 accelerator: process.platform == "darwin" ? "Command+F" : "Ctrl+F",
-                click(){
+                click() {
                     createSearchWindow();
                 }
             },
             {
                 label: "Delete Movie",
-                click(){
+                click() {
 
                 }
             }
@@ -192,14 +203,14 @@ const mainMenuTemplate = [
     }
 ];
 
-if (process.platform == "darwin"){
+if (process.platform == "darwin") {
     mainMenuTemplate.unshift({
-        label : app.getName(),
+        label: app.getName(),
         role: "TODO"
     })
 }
 
-if (process.env.NODE_ENV !== "production"){
+if (process.env.NODE_ENV !== "production") {
     mainMenuTemplate.push(
         {
             label: "Dev Tools",
@@ -207,8 +218,8 @@ if (process.env.NODE_ENV !== "production"){
                 {
                     label: "Open Dev Window",
                     accelerator: "F12",
-                    click(item, focusedWindow){
-                            focusedWindow.toggleDevTools();
+                    click(item, focusedWindow) {
+                        focusedWindow.toggleDevTools();
                     }
                 },
             ]
@@ -216,15 +227,15 @@ if (process.env.NODE_ENV !== "production"){
     )
 }
 
-function createAddWindow(){
+function createAddWindow() {
     addWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true
         },
         width: 450,
         height: 380,
+        frame: false,
         title: "Add Movie",
-        titleBarStyle: "hiddenInset"
     });
 
     addWindow.setResizable(false);
@@ -240,15 +251,16 @@ function createAddWindow(){
     })
 }
 
-function createSearchWindow(){
+function createSearchWindow() {
     searchWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true
         },
         width: 450,
         height: 265,
+        frame: false,
+        backgroundColor: '#FFF',
         title: "Search Movie",
-        titleBarStyle: "hiddenInset"
     });
 
     searchWindow.setResizable(false);
@@ -282,6 +294,5 @@ function getAppDataPath() {
     }
 }
 
-function searchMovie(){
-
-}
+// TODO
+// Implement movie deletion function
