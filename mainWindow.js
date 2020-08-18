@@ -32,7 +32,7 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
 
     const watchSection = document.createElement("ul");
     watchSection.className = "watch-section";
-    
+
     const movies = document.createElement("li");
 
     const movieName = document.createElement("a");
@@ -54,8 +54,11 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
     watchSit.hidden = true;
 
     const but = document.createElement("button");
-    
-    if (cond === 'true'){
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "deleteButton";
+    deleteButton.innerText = "✕";
+
+    if (cond === 'true') {
         but.innerText = "✘";
         but.className = "change-section cross";
         movies.appendChild(but);
@@ -63,13 +66,14 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
         movies.appendChild(directorName);
         movies.appendChild(movieYear);
         movies.appendChild(watchSit);
+        movies.appendChild(deleteButton);
         watchSection.appendChild(movies);
         rowWatched.appendChild(watchSection);
         container.appendChild(rowToWatch);
         container.appendChild(rowWatched);
     }
 
-    else if (cond === 'false'){
+    else if (cond === 'false') {
         but.innerText = "✔";
         but.className = "change-section check";
         movies.appendChild(but);
@@ -77,35 +81,47 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
         movies.appendChild(directorName);
         movies.appendChild(movieYear);
         movies.appendChild(watchSit);
+        movies.appendChild(deleteButton);
         watchSection.appendChild(movies);
         rowToWatch.appendChild(watchSection);
         container.appendChild(rowToWatch);
         container.appendChild(rowWatched);
-    } 
+    }
 
     but.addEventListener("click", (e) => {
-        //checkBookCount();
         let data = `${e.target.nextSibling.innerText}#${e.target.nextSibling.nextSibling.innerText}#${e.target.nextSibling.nextSibling.nextSibling.innerText}#${e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText}`;
         let path = fs.readFileSync(appDataFilePath, 'utf-8');
         var newValue;
-        
-        if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "true"){
+
+        if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "true") {
             newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}#${e.target.nextSibling.nextSibling.innerText}#${e.target.nextSibling.nextSibling.nextSibling.innerText}#false\n`);
         }
 
-        else if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "false"){
+        else if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "false") {
             newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}#${e.target.nextSibling.nextSibling.innerText}#${e.target.nextSibling.nextSibling.nextSibling.innerText}#true\n`);
 
         }
         fs.writeFileSync(appDataFilePath, newValue, 'utf-8');
-        
+
         ipcRenderer.send("mainWindow:reload");
+    });
+
+    deleteButton.addEventListener("click", (e) => {
+        if (confirm("Are you sure to delete this movie?")) {
+            let data = `${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}#${e.target.previousSibling.previousSibling.previousSibling.innerText}#${e.target.previousSibling.previousSibling.innerText}#${e.target.previousSibling.innerText}`;
+            let path = fs.readFileSync(appDataFilePath, 'utf-8');
+            var newValue;
+            newValue = path.replace(new RegExp(data), "");
+            fs.writeFileSync(appDataFilePath, newValue, 'utf-8');
+            
+            e.target.parentNode.parentNode.remove();
+        }
     });
 
     checkMovieCount();
 });
 
-function checkMovieCount(){
+function checkMovieCount() {
     const container = document.querySelector("#to-watch");
     const container2 = document.querySelector("#watched");
 

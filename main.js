@@ -130,7 +130,7 @@ app.on('ready', () => {
             };
         });
 
-        if (found !== true){
+        if (found !== true) {
             found = false;
         }
 
@@ -206,14 +206,14 @@ const mainMenuTemplate = [
 if (process.platform == "darwin") {
     mainMenuTemplate.unshift({
         label: app.getName(),
-        role: "TODO"
+        role: ""
     })
 }
 
 if (process.env.NODE_ENV !== "production") {
     mainMenuTemplate.push(
         {
-            label: "Dev Tools",
+            label: "Developer Tools",
             submenu: [
                 {
                     label: "Open Dev Window",

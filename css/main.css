@@ -53,6 +53,7 @@ li{
     font-size: 24px;
     margin: 5px;
     padding: 10px;
+    position: relative;
     width: 91%;
 }
 
@@ -101,5 +102,21 @@ a{
 }
 
 .cross:hover{
+    color: red;
+}
+
+.deleteButton{
+    background-color: rgb(33, 33, 33);
+    border: none;
+    border-radius: 4px;
+    color: gray;
+    font-size: 24px;
+    left: 670px;
+    outline: none;
+    position: absolute;
+    top: 15px;
+}
+
+.deleteButton:hover{
     color: red;
 }
