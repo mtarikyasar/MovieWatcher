@@ -63,13 +63,29 @@ app.on('ready', () => {
 
         if (movieName || directorName) {
             console.log(`Movie Name: ${movieName}\nDirector Name: ${directorName}\nRelease Year: ${year}`);
-            let data = `${movieName}#${directorName}#${year}#${cond}\n`;
+            let text = `${movieName}#${directorName}#${year}#${cond}\n`;
 
-            fs.appendFile(appDataFilePath, data, (err) => {
-                if (err) {
-                    console.log("There was a problem saving data.");
-                } else {
-                    console.log("Data saved correctly.");
+
+            fs.readFile(appDataFilePath, function (err, data) {
+                if (err) throw err;
+
+                if (data.includes(text)) {
+                    const options = {
+                        buttons: ['Close'],
+                        message: `Movie '${movieName}' already exists on the list.`,
+                    }
+
+                    msg = dialog.showMessageBox(null, options);
+                }
+
+                else {
+                    fs.appendFile(appDataFilePath, text, (err) => {
+                        if (err) {
+                            console.log("There was a problem saving data.");
+                        } else {
+                            console.log("Data saved correctly.");
+                        }
+                    });
                 }
             });
 

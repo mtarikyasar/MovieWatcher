@@ -108,10 +108,10 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
 
     deleteButton.addEventListener("click", (e) => {
         if (confirm(`Are you sure to delete '${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}'`)) {
-            let data = `${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}#${e.target.previousSibling.previousSibling.previousSibling.innerText}#${e.target.previousSibling.previousSibling.innerText}#${e.target.previousSibling.innerText}`;
+            let data = `${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}#${e.target.previousSibling.previousSibling.previousSibling.innerText}#${e.target.previousSibling.previousSibling.innerText}#${e.target.previousSibling.innerText}\n`;
             let path = fs.readFileSync(appDataFilePath, 'utf-8');
             var newValue;
-            newValue = path.replace(new RegExp(data), "");
+            newValue = path.replace(new RegExp(data), '');
             fs.writeFileSync(appDataFilePath, newValue, 'utf-8');
             
             e.target.parentNode.parentNode.remove();
