@@ -192,12 +192,6 @@ const mainMenuTemplate = [
                 click() {
                     createSearchWindow();
                 }
-            },
-            {
-                label: "Delete Movie",
-                click() {
-
-                }
             }
         ]
     }
@@ -293,6 +287,3 @@ function getAppDataPath() {
         }
     }
 }
-
-// TODO
-// Implement movie deletion function
