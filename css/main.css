@@ -35,7 +35,7 @@ div .container{
     margin: 5px;
     outline: none;
     padding: 14px;
-    transition: .1s;
+    transition: .2s;
 }
 
 .addMovie:hover{
