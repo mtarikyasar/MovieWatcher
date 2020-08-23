@@ -9,10 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "electron": "^9.2.1",
     "line-reader": "^0.4.0",
     "electron-packager": "^15.0.0"
   },
-  "devDependencies": {
-    "electron": "^9.2.1"
-  }
+  "scripts": {
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --prune=true --out=release-builds",
+   "package-win": "electron-packager . moviewatcher --overwrite --asar=true --platform=win32 --arch=ia32 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Movie Watcher\"",    
+   "package-linux": "electron-packager . moviewatcher --overwrite --asar=true --platform=linux --arch=x64 --prune=true --out=release-builds"
+    }
 }
