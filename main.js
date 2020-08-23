@@ -245,15 +245,30 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 function createAddWindow() {
-    addWindow = new BrowserWindow({
-        webPreferences: {
-            nodeIntegration: true
-        },
-        width: 450,
-        height: 380,
-        frame: false,
-        title: "Add Movie",
-    });
+
+    if (process.platform === "win32"){
+        addWindow = new BrowserWindow({
+            webPreferences: {
+                nodeIntegration: true
+            },
+            width: 500,
+            height: 450,
+            frame: false,
+            title: "Add Movie",
+        });
+    }
+
+    else {
+        addWindow = new BrowserWindow({
+            webPreferences: {
+                nodeIntegration: true
+            },
+            width: 450,
+            height: 380,
+            frame: false,
+            title: "Add Movie",
+        });
+    }
 
     addWindow.setResizable(false);
 

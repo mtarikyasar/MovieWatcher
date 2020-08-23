@@ -15,14 +15,12 @@ input[type=text]{
     display: block;
     font-size: 18px;
     margin: 8px 0;
-    outline: none;
     padding: 12px 20px;
     width: 100%;
 }
 
 input[type=checkbox]{
     margin: 30px 0 30px 0;
-    outline: none;
     transform: scale(4);
     width: 100%;
 }
@@ -35,7 +33,6 @@ input[type=submit]{
     cursor: pointer;
     font-size: 24px;
     margin: 4px 0;
-    outline: none;
     padding: 7px 10px;
     text-align: center;
     transition: .1s linear;
@@ -43,7 +40,7 @@ input[type=submit]{
 }
 
 #saveBtn:hover{
-    background-color: rgb(29, 185, 84);
+    background-color: rgb(0, 255, 89);
 }
 
 #cancelBtn:hover{
