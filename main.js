@@ -65,7 +65,6 @@ app.on('ready', () => {
             console.log(`Movie Name: ${movieName}\nDirector Name: ${directorName}\nRelease Year: ${year}`);
             let text = `${movieName}#${directorName}#${year}#${cond}\n`;
 
-
             fs.readFile(appDataFilePath, function (err, data) {
                 if (err) throw err;
 

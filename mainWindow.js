@@ -125,7 +125,7 @@ function checkMovieCount() {
     const container = document.querySelector("#to-watch");
     const container2 = document.querySelector("#watched");
 
-    let unwatched = container.childElementCount;
+    let unwatched = container.childElementCount-1;
     let watched = container2.childElementCount;
 
     ipcRenderer.send("key:movieCount", unwatched, watched);
