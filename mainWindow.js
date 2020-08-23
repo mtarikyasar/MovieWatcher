@@ -18,8 +18,8 @@ function getAppDataPath() {
     }
 }
 
-const appDatatDirPath = getAppDataPath();
-const appDataFilePath = path.join(appDatatDirPath, 'movieList.txt');
+const appDataDirPath = getAppDataPath();
+const appDataFilePath = path.join(appDataDirPath, 'movieList.txt');
 checkMovieCount();
 
 lineReader.eachLine(appDataFilePath, function (line, last) {
@@ -126,7 +126,7 @@ function checkMovieCount() {
     const container2 = document.querySelector("#watched");
 
     let unwatched = container.childElementCount-1;
-    let watched = container2.childElementCount;
+    let watched = container2.childElementCount-1;
 
     ipcRenderer.send("key:movieCount", unwatched, watched);
 }

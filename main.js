@@ -252,8 +252,9 @@ function createAddWindow() {
                 nodeIntegration: true
             },
             width: 500,
-            height: 450,
+            height: 400,
             frame: false,
+            backgroundColor: '#FFF',
             title: "Add Movie",
         });
     }

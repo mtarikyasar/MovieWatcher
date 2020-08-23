@@ -2,6 +2,10 @@ body{
     background-color: rgb(33, 33, 33);
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 div.container {
     border-radius: 5px;
     padding: 20px;

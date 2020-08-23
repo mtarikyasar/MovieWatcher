@@ -7,6 +7,10 @@ body{
     text-align: center;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 div .container{
     text-align: center;
 }
