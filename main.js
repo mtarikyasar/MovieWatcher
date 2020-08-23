@@ -61,10 +61,19 @@ app.on('ready', () => {
 
         const appDataFilePath = path.join(appDataDirPath, 'movieList.txt');
 
+        //Create movieList.txt if it doesn't exist
+        if (!fs.existsSync(appDataFilePath)){
+            fs.writeFile(appDataFilePath, '', function(err) {
+                if(err) {
+                    console.log(err);
+                }
+            });
+        }
+
         if (movieName || directorName) {
             console.log(`Movie Name: ${movieName}\nDirector Name: ${directorName}\nRelease Year: ${year}`);
             let text = `${movieName}#${directorName}#${year}#${cond}\n`;
-
+            
             fs.readFile(appDataFilePath, function (err, data) {
                 if (err) throw err;
 
@@ -97,7 +106,6 @@ app.on('ready', () => {
     });
 
     // Movie Count
-
     ipcMain.on("key:movieCount", (err, unwatched, watched) => {
         unwatchedMovieCount = unwatched;
         watchedMovieCount = watched;
