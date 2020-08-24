@@ -55,8 +55,7 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
 
     const but = document.createElement("button");
     const deleteButton = document.createElement("button");
-    deleteButton.className = "deleteButton";
-    deleteButton.innerText = "Delete";
+    deleteButton.className = "deleteButton fa fa-trash-o";
 
     if (cond === 'true') {
         but.innerText = "✘";
