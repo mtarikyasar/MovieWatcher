@@ -113,10 +113,10 @@ a{
     background-color: rgb(33, 33, 33);
     border: none;
     border-radius: 4px;
-    bottom: 35px;
+    bottom: 30px;
     color: gray;
-    font-size: 16px;
-    left: 680px;
+    font-size: 24px;
+    left: 679px;
     outline: none;
     position: absolute;
     transition: .2s linear;
@@ -124,6 +124,4 @@ a{
 
 .deleteButton:hover{
     color: red;
-    font-size: 24px;
-    bottom: 30px;
 }
