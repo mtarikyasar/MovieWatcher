@@ -62,9 +62,9 @@ app.on('ready', () => {
         const appDataFilePath = path.join(appDataDirPath, 'movieList.txt');
 
         //Create movieList.txt if it doesn't exist
-        if (!fs.existsSync(appDataFilePath)){
-            fs.writeFile(appDataFilePath, '', function(err) {
-                if(err) {
+        if (!fs.existsSync(appDataFilePath)) {
+            fs.writeFile(appDataFilePath, '', function (err) {
+                if (err) {
                     console.log(err);
                 }
             });
@@ -73,7 +73,7 @@ app.on('ready', () => {
         if (movieName || directorName) {
             console.log(`Movie Name: ${movieName}\nDirector Name: ${directorName}\nRelease Year: ${year}`);
             let text = `${movieName}#${directorName}#${year}#${cond}\n`;
-            
+
             fs.readFile(appDataFilePath, function (err, data) {
                 if (err) throw err;
 
@@ -246,7 +246,7 @@ if (process.env.NODE_ENV !== "production") {
 
 function createAddWindow() {
 
-    if (process.platform === "win32"){
+    if (process.platform === "win32") {
         addWindow = new BrowserWindow({
             webPreferences: {
                 nodeIntegration: true
