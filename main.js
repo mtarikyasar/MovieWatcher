@@ -71,7 +71,10 @@ app.on('ready', () => {
         }
 
         if (movieName || directorName) {
-            console.log(`Movie Name: ${movieName}\nDirector Name: ${directorName}\nRelease Year: ${year}`);
+            console.log(`Movie Name: ${movieName}\n
+                        Director Name: ${directorName}\n
+                        Release Year: ${year}`);
+
             let text = `${movieName}#${directorName}#${year}#${cond}\n`;
 
             fs.readFile(appDataFilePath, function (err, data) {
@@ -203,7 +206,8 @@ const mainMenuTemplate = [
                 click() {
                     const options = {
                         buttons: ['Close'],
-                        message: `You watched ${watchedMovieCount} movies.\nYou've got ${unwatchedMovieCount} movies to watch.`,
+                        message: `You watched ${watchedMovieCount} movies.\n
+                                    You've got ${unwatchedMovieCount} movies to watch.`,
                     }
                     const msg = dialog.showMessageBox(null, options);
                     console.log(msg);

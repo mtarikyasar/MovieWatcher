@@ -88,16 +88,24 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
     }
 
     but.addEventListener("click", (e) => {
-        let data = `${e.target.nextSibling.innerText}#${e.target.nextSibling.nextSibling.innerText}#${e.target.nextSibling.nextSibling.nextSibling.innerText}#${e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText}`;
+        let data = `${e.target.nextSibling.innerText}#
+                    ${e.target.nextSibling.nextSibling.innerText}#
+                    ${e.target.nextSibling.nextSibling.nextSibling.innerText}#
+                    ${e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText}`;
+
         let path = fs.readFileSync(appDataFilePath, 'utf-8');
         var newValue;
 
         if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "true") {
-            newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}#${e.target.nextSibling.nextSibling.innerText}#${e.target.nextSibling.nextSibling.nextSibling.innerText}#false\n`);
+            newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}#
+                                                        ${e.target.nextSibling.nextSibling.innerText}#
+                                                        ${e.target.nextSibling.nextSibling.nextSibling.innerText}#false\n`);
         }
 
         else if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "false") {
-            newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}#${e.target.nextSibling.nextSibling.innerText}#${e.target.nextSibling.nextSibling.nextSibling.innerText}#true\n`);
+            newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}
+                                                        ${e.target.nextSibling.nextSibling.innerText}#
+                                                        ${e.target.nextSibling.nextSibling.nextSibling.innerText}#true\n`);
 
         }
         fs.writeFileSync(appDataFilePath, newValue, 'utf-8');
@@ -107,7 +115,11 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
 
     deleteButton.addEventListener("click", (e) => {
         if (confirm(`Are you sure to delete '${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}'`)) {
-            let data = `${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}#${e.target.previousSibling.previousSibling.previousSibling.innerText}#${e.target.previousSibling.previousSibling.innerText}#${e.target.previousSibling.innerText}\n`;
+            let data = `${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}#
+                        ${e.target.previousSibling.previousSibling.previousSibling.innerText}#
+                        ${e.target.previousSibling.previousSibling.innerText}#
+                        ${e.target.previousSibling.innerText}\n`;
+                        
             let path = fs.readFileSync(appDataFilePath, 'utf-8');
             var newValue;
             newValue = path.replace(new RegExp(data), '');
