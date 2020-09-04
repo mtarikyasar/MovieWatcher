@@ -1,5 +1,5 @@
 # MovieWatcher
-I wrote this application for my personal whim. I wanted to keep track of the movies that I watched and want to watch.
+I wrote this application in Electron.js for my personal whim. I wanted to keep track of the movies that I watched and want to watch.
 
 ![Main Window Add Movie Button and To Watch Section](/screenshots/MainWindow_ToWatchSection.png)
 ![Main Window and Watched Section](/screenshots/MainWindow_WatchedSection.png)
