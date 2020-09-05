@@ -2,3 +2,5 @@ node_modules/
 release-builds/
 build/
 .DS_Store
+create_installer_macos.sh
+deploy_macos.sh
