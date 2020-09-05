@@ -137,11 +137,6 @@ function checkMovieCount() {
     const container = document.querySelector("#to-watch");
     const container2 = document.querySelector("#watched");
 
-    /*  -1 because of some reason i couldn't understand,
-        childElementCount gives always one more than
-        existing movie count
-    */
-   
     let unwatched = container.childElementCount-1;
     let watched = container2.childElementCount-1;
 

@@ -291,7 +291,7 @@ function createSearchWindow() {
             nodeIntegration: true
         },
         width: 450,
-        height: 265,
+        height: 220,
         frame: false,
         backgroundColor: '#FFF',
         title: "Search Movie",
