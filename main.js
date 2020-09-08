@@ -275,7 +275,7 @@ function createAddWindow() {
     addWindow.setResizable(false);
 
     addWindow.loadURL(url.format({
-        pathname: path.join(__dirname, "/html/addWindow.html"),
+        pathname: path.join(__dirname, "/assets/html/addWindow.html"),
         protocol: "file:",
         slashes: true
     }));
@@ -300,7 +300,7 @@ function createSearchWindow() {
     searchWindow.setResizable(false);
 
     searchWindow.loadURL(url.format({
-        pathname: path.join(__dirname, "/html/searchWindow.html"),
+        pathname: path.join(__dirname, "/assets/html/searchWindow.html"),
         protocol: "file:",
         slashes: true
     }));

@@ -35,10 +35,9 @@
         
         if(searchBtn){
             searchBtn.addEventListener("click", () => {
-                ipcRenderer.send("searchWindow:search", movieName.value, directorName.value);
+                ipcRenderer.send("searchWindow:search", movieName.value /*, directorName.value */);
             });
         };
     </script>
-
 </body>
 </html>
