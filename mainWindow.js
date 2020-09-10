@@ -40,6 +40,19 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
     movieName.id = "movieName";
     movieName.innerText = res[0];
 
+    const poster = document.createElement("img");
+    poster.hidden = true;
+    poster.className = "movie-poster";
+
+    axios.get("http://www.omdbapi.com/?t=" + res[0] + "&apikey=43f1f786")
+    .then((response) => {
+        // console.log(response.data.Poster);
+        poster.src = response.data.Poster;
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+
     const directorName = document.createElement("a");
     directorName.className = "director-name";
     directorName.id = "directorName";
@@ -53,6 +66,9 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
     watchSit.innerText = res[3];
     watchSit.hidden = true;
 
+    const previewButton = document.createElement("button");
+    previewButton.className = "previewButton fa fa-eye"
+
     const but = document.createElement("button");
     const deleteButton = document.createElement("button");
     deleteButton.className = "deleteButton fa fa-trash-o";
@@ -61,10 +77,12 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
         but.innerText = "✘";
         but.className = "change-section cross";
         movies.appendChild(but);
+        movies.appendChild(poster);
         movies.appendChild(movieName);
         movies.appendChild(directorName);
         movies.appendChild(movieYear);
         movies.appendChild(watchSit);
+        movies.appendChild(previewButton);
         movies.appendChild(deleteButton);
         watchSection.appendChild(movies);
         rowWatched.appendChild(watchSection);
@@ -76,10 +94,12 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
         but.innerText = "✔";
         but.className = "change-section check";
         movies.appendChild(but);
+        movies.appendChild(poster);
         movies.appendChild(movieName);
         movies.appendChild(directorName);
         movies.appendChild(movieYear);
         movies.appendChild(watchSit);
+        movies.appendChild(previewButton);
         movies.appendChild(deleteButton);
         watchSection.appendChild(movies);
         rowToWatch.appendChild(watchSection);
@@ -114,6 +134,11 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
         ipcRenderer.send("mainWindow:reload");
     });
 
+    previewButton.addEventListener("click", (e) => {
+        ipcRenderer.send("openWindow:preview", res[0]);
+        ipcRenderer.send("previewWindow:poster", res[0]);
+    });
+
     deleteButton.addEventListener("click", (e) => {
         if (confirm(`Are you sure to delete '${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}'`)) {
             let data = `${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}#` +
@@ -141,4 +166,8 @@ function checkMovieCount() {
     let watched = container2.childElementCount-1;
 
     ipcRenderer.send("key:movieCount", unwatched, watched);
+}
+
+function getMovies(movieName){
+    
 }

@@ -1,13 +1,14 @@
 const url = require('url');
 const path = require('path');
 const fs = require('fs');
-const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog, webContents } = require('electron');
 
 let mainWindow, addWindow, searchWindow;
-
 let watchedMovieCount, unwatchedMovieCount;
 
+
 app.on('ready', () => {
+    let previewWindow = new BrowserWindow();
     console.log("Application is running...");
     let done = false; // For checking if search process
     let found;
@@ -171,6 +172,22 @@ app.on('ready', () => {
         const msg = dialog.showMessageBox(null, options);
         console.log(msg);
     }
+
+    // Preview Window Events
+
+    ipcMain.on("openWindow:preview", (err, movieNamePos) => {
+        createPreviewWindow(movieNamePos);
+        
+        mainWindow.webContents.on('did-finish-load', () => {
+            mainWindow.webContents.send('message', movieNamePos);
+        });
+    });
+    
+
+    ipcMain.on("previewWindow:close", () => {
+        previewWindow.close();
+        previewWindow = null;
+    });
 });
 
 const mainMenuTemplate = [
@@ -246,7 +263,6 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 function createAddWindow() {
-
     if (process.platform === "win32") {
         addWindow = new BrowserWindow({
             webPreferences: {
@@ -307,6 +323,30 @@ function createSearchWindow() {
 
     searchWindow.on('close', () => {
         searchWindow = null;
+    })
+}
+
+function createPreviewWindow(movieName) {
+    previewWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true
+        },
+        width: 400,
+        height: 700,
+        backgroundColor: '#FFF',
+        title: movieName,
+    });
+
+    previewWindow.setResizable(false);
+
+    previewWindow.loadURL(url.format({
+        pathname: path.join(__dirname, "/assets/html/previewWindow.html"),
+        protocol: "file:",
+        slashes: true
+    }));
+
+    previewWindow.on('close', () => {
+        previewWindow = null;
     })
 }
 
