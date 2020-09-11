@@ -34,28 +34,12 @@ const appDataFilePath = path.join(appDataDirPath, 'movieList.txt');
 const appDataFilePathSave = path.join(appDataDirPath, 'movieList.json');
 
 checkMovieCount();
+let MovieArray = [];
 
-fs.appendFile(appDataFilePathSave, '[', (err) => {
-    if (err) {
-        console.log("There was a problem saving data.");
-    } else {
-        console.log("Data saved correctly.");
-    }
-});
+let json = require(appDataFilePathSave);
 
-lineReader.eachLine(appDataFilePath, function (line, last) {
-    let res = line.split('#');
-    let cond = res[3];
-
-    let movie = {
-        name: "",
-        director: "",
-        year: 0,
-        isWatched: false,
-        imdbRating: 0,
-        posterLink: ""
-    };
-
+for (let i = 0; i < json.length; i++) {
+    let cond = json[i].isWatched;
     const container = document.querySelector(".container");
     const rowToWatch = document.getElementById("to-watch");
     const rowWatched = document.getElementById("watched");
@@ -68,53 +52,24 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
     const movieName = document.createElement("a");
     movieName.className = "movie-name";
     movieName.id = "movieName";
-    movieName.innerText = res[0];
+    movieName.innerText = json[i].name;
 
     const poster = document.createElement("img");
     poster.hidden = true;
     poster.className = "movie-poster";
-
-    
-
-    axios.get("http://www.omdbapi.com/?t=" + res[0] + "&apikey=43f1f786")
-        .then((response) => {
-            //console.log(response.data.Poster);
-            movie.name = res[0] + "," + "\n";
-            movie.director = res[1] + "," + "\n";
-            movie.year = res[2 + "," + "\n"];
-            movie.isWatched = res[3] + "," + "\n";
-            movie.imdbRating = response.data.Ratings[0].Value + "," + "\n";
-            movie.posterLink = response.data.Poster + "\n";
-
-            let text = JSON.stringify(movie) + "," + "\n";
-
-            fs.appendFile(appDataFilePathSave, text, (err) => {
-                if (err) {
-                    console.log("There was a problem saving data.");
-                } else {
-                    console.log("Data saved correctly.");
-                }
-            });
-
-            poster.src = response.data.Poster;
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-
-    
+    poster.src = json[i].posterLink;
 
     const directorName = document.createElement("a");
     directorName.className = "director-name";
     directorName.id = "directorName";
-    directorName.innerText = res[1];
+    directorName.innerText = json[i].director;
 
     const movieYear = document.createElement("a");
     movieYear.className = "movie-year";
-    movieYear.innerText = res[2];
+    movieYear.innerText = json[i].year;
 
     const watchSit = document.createElement("a");
-    watchSit.innerText = res[3];
+    watchSit.innerText = json[i].isWatched;
     watchSit.hidden = true;
 
     const previewButton = document.createElement("button");
@@ -208,16 +163,221 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
 
     // Movies.push(movie);
     checkMovieCount();
-    console.log(movie);
-});
 
-fs.appendFile(appDataFilePathSave, ']', (err) => {
-    if (err) {
-        console.log("There was a problem saving data.");
-    } else {
-        console.log("Data saved correctly.");
+
+}
+
+// lineReader.eachLine(appDataFilePath, function (line, last) {
+//     let res = line.split('#');
+//     let cond = res[3];
+
+//     let movie = {
+//         name: "",
+//         director: "",
+//         year: 0,
+//         isWatched: false,
+//         imdbRating: 0,
+//         posterLink: ""
+//     };
+
+//     const container = document.querySelector(".container");
+//     const rowToWatch = document.getElementById("to-watch");
+//     const rowWatched = document.getElementById("watched");
+
+//     const watchSection = document.createElement("ul");
+//     watchSection.className = "watch-section";
+
+//     const movies = document.createElement("li");
+
+//     const movieName = document.createElement("a");
+//     movieName.className = "movie-name";
+//     movieName.id = "movieName";
+//     movieName.innerText = res[0];
+
+//     const poster = document.createElement("img");
+//     poster.hidden = true;
+//     poster.className = "movie-poster";
+
+
+
+//     axios.get("http://www.omdbapi.com/?t=" + res[0] + "&apikey=43f1f786")
+//         .then((response) => {
+//             //console.log(response.data.Poster);
+//             movie.name = res[0];
+//             movie.director = res[1];
+//             movie.year = res[2];
+//             movie.isWatched = res[3];
+//             movie.imdbRating = response.data.Ratings[0].Value;
+//             movie.posterLink = response.data.Poster;
+
+//             let text = JSON.stringify(movie);
+//             MovieArray.push(movie);
+
+//             // fs.appendFile(appDataFilePathSave, text, (err) => {
+//             //     if (err) {
+//             //         console.log("There was a problem saving data.");
+//             //     } else {
+//             //         console.log("Data saved correctly.");
+//             //     }
+//             // });
+
+//             poster.src = response.data.Poster;
+//         })
+//         .catch((err) => {
+//             console.log(err);
+//         });
+
+
+
+//     const directorName = document.createElement("a");
+//     directorName.className = "director-name";
+//     directorName.id = "directorName";
+//     directorName.innerText = res[1];
+
+//     const movieYear = document.createElement("a");
+//     movieYear.className = "movie-year";
+//     movieYear.innerText = res[2];
+
+//     const watchSit = document.createElement("a");
+//     watchSit.innerText = res[3];
+//     watchSit.hidden = true;
+
+//     const previewButton = document.createElement("button");
+//     previewButton.className = "previewButton fa fa-eye"
+
+//     const but = document.createElement("button");
+//     const deleteButton = document.createElement("button");
+//     deleteButton.className = "deleteButton fa fa-trash-o";
+
+//     if (cond === 'true') {
+//         but.innerText = "✘";
+//         but.className = "change-section cross";
+//         movies.appendChild(but);
+//         movies.appendChild(poster);
+//         movies.appendChild(movieName);
+//         movies.appendChild(directorName);
+//         movies.appendChild(movieYear);
+//         movies.appendChild(watchSit);
+//         movies.appendChild(previewButton);
+//         movies.appendChild(deleteButton);
+//         watchSection.appendChild(movies);
+//         rowWatched.appendChild(watchSection);
+//         container.appendChild(rowToWatch);
+//         container.appendChild(rowWatched);
+//     }
+
+//     else if (cond === 'false') {
+//         but.innerText = "✔";
+//         but.className = "change-section check";
+//         movies.appendChild(but);
+//         movies.appendChild(poster);
+//         movies.appendChild(movieName);
+//         movies.appendChild(directorName);
+//         movies.appendChild(movieYear);
+//         movies.appendChild(watchSit);
+//         movies.appendChild(previewButton);
+//         movies.appendChild(deleteButton);
+//         watchSection.appendChild(movies);
+//         rowToWatch.appendChild(watchSection);
+//         container.appendChild(rowToWatch);
+//         container.appendChild(rowWatched);
+//     }
+
+//     but.addEventListener("click", (e) => {
+//         let data = `${e.target.nextSibling.innerText}#` +
+//             `${e.target.nextSibling.nextSibling.innerText}#` +
+//             `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
+//             `${e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText}`;
+
+//         let path = fs.readFileSync(appDataFilePath, 'utf-8');
+//         var newValue;
+
+//         if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "true") {
+//             newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}#` +
+//                 `${e.target.nextSibling.nextSibling.innerText}#` +
+//                 `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
+//                 `false\n`);
+//         }
+
+//         else if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "false") {
+//             newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}#` +
+//                 `${e.target.nextSibling.nextSibling.innerText}#` +
+//                 `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
+//                 `true\n`);
+//         }
+//         fs.writeFileSync(appDataFilePath, newValue, 'utf-8');
+
+//         ipcRenderer.send("mainWindow:reload");
+//     });
+
+//     previewButton.addEventListener("click", (e) => {
+//         ipcRenderer.send("openWindow:preview", res[0], poster.src);
+//         ipcRenderer.send("previewWindow:poster", res[0]);
+//     });
+
+//     deleteButton.addEventListener("click", (e) => {
+//         if (confirm(`Are you sure to delete '${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}'`)) {
+//             let data = `${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}#` +
+//                 `${e.target.previousSibling.previousSibling.previousSibling.innerText}#` +
+//                 `${e.target.previousSibling.previousSibling.innerText}#` +
+//                 `${e.target.previousSibling.innerText}\n`;
+
+//             let path = fs.readFileSync(appDataFilePath, 'utf-8');
+//             var newValue;
+//             newValue = path.replace(new RegExp(data), '');
+//             fs.writeFileSync(appDataFilePath, newValue, 'utf-8');
+
+//             e.target.parentNode.parentNode.remove();
+//         }
+//     });
+
+//     // Movies.push(movie);
+//     checkMovieCount();
+//     console.log(movie);
+// });
+
+
+
+
+function transferToJson(array) {
+    fs.appendFile(appDataFilePathSave, '[', (err) => {
+        if (err) {
+            console.log("There was a problem saving data.");
+        } else {
+            console.log("Data saved correctly.");
+        }
+    })
+    for (let i = 0; i < array.length; i++) {
+        let text = JSON.stringify(array[i]);
+
+        if (i != array.length - 1) {
+            fs.appendFile(appDataFilePathSave, text + "," + "\n", (err) => {
+                if (err) {
+                    console.log("There was a problem saving data.");
+                } else {
+                    console.log("Data saved correctly.");
+                }
+            })
+        }
+        else {
+            fs.appendFile(appDataFilePathSave, text + '\n' + ']', (err) => {
+                if (err) {
+                    console.log("There was a problem saving data.");
+                } else {
+                    console.log("Data saved correctly.");
+                }
+            })
+        }
     }
-});
+};
+
+// fs.appendFile(appDataFilePathSave, ']', (err) => {
+//     if (err) {
+//         console.log("There was a problem saving data.");
+//     } else {
+//         console.log("Data saved correctly.");
+//     }
+// });
 
 // function printMovies(movieList){
 //     for (let i = 0; i < movieList.length(); i++){

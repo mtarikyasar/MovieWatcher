@@ -55,12 +55,14 @@ app.on('ready', () => {
     ipcMain.on("addWindow:save", (err, movieName, directorName, year, cond) => {
         const appDataDirPath = getAppDataPath();
 
+
         //Create appDataDir if not exist
         if (!fs.existsSync(appDataDirPath)) {
             fs.mkdirSync(appDataDirPath);
         }
 
         const appDataFilePath = path.join(appDataDirPath, 'movieList.json');
+        let json = require(appDataFilePath);
 
         //Create movieList.txt if it doesn't exist
         if (!fs.existsSync(appDataFilePath)) {
@@ -92,10 +94,11 @@ app.on('ready', () => {
                 movie.isWatched = cond;
                 movie.imdbRating = response.data.Ratings[0].Value;
                 movie.posterLink = response.data.Poster;
-
+                
+                json.push(movie);
                 text = JSON.stringify(movie);
 
-                fs.appendFile(appDataFilePath, text, (err) => {
+                fs.writeFileSync(appDataFilePath, JSON.stringify(json), (err) => {
                     if (err) {
                         console.log("There was a problem saving data.");
                     } else {
