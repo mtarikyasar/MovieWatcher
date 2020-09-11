@@ -215,7 +215,6 @@ app.on('ready', () => {
 
     // Preview Window Events
 
-
     ipcMain.on("openWindow:preview", (err, posterLink) => {
         //createPreviewWindow(movieNamePos);
         const win = new BrowserWindow({ width: 400, height: 600 });
