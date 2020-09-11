@@ -30,13 +30,12 @@ function getAppDataPath() {
 }
 
 const appDataDirPath = getAppDataPath();
-const appDataFilePath = path.join(appDataDirPath, 'movieList.txt');
-const appDataFilePathSave = path.join(appDataDirPath, 'movieList.json');
+const appDataFilePath = path.join(appDataDirPath, 'movieList.json');
 
 checkMovieCount();
 let MovieArray = [];
 
-let json = require(appDataFilePathSave);
+let json = require(appDataFilePath);
 
 for (let i = 0; i < json.length; i++) {
     let cond = json[i].isWatched;
@@ -87,7 +86,7 @@ for (let i = 0; i < json.length; i++) {
         movies.appendChild(movieName);
         movies.appendChild(directorName);
         movies.appendChild(movieYear);
-        movies.appendChild(watchSit);
+        // movies.appendChild(watchSit);
         movies.appendChild(previewButton);
         movies.appendChild(deleteButton);
         watchSection.appendChild(movies);
@@ -104,7 +103,7 @@ for (let i = 0; i < json.length; i++) {
         movies.appendChild(movieName);
         movies.appendChild(directorName);
         movies.appendChild(movieYear);
-        movies.appendChild(watchSit);
+        // movies.appendChild(watchSit);
         movies.appendChild(previewButton);
         movies.appendChild(deleteButton);
         watchSection.appendChild(movies);
@@ -114,6 +113,7 @@ for (let i = 0; i < json.length; i++) {
     }
 
     but.addEventListener("click", (e) => {
+        console.log(json[i].isWatched);
         let data = `${e.target.nextSibling.innerText}#` +
             `${e.target.nextSibling.nextSibling.innerText}#` +
             `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
@@ -122,49 +122,34 @@ for (let i = 0; i < json.length; i++) {
         let path = fs.readFileSync(appDataFilePath, 'utf-8');
         var newValue;
 
-        if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "true") {
-            newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}#` +
-                `${e.target.nextSibling.nextSibling.innerText}#` +
-                `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
-                `false\n`);
+        if (json[i].isWatched === "true") {
+            console.log(json[i].name + " " + json[i].isWatched);
+            json[i].isWatched = "false";
         }
 
-        else if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "false") {
-            newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}#` +
-                `${e.target.nextSibling.nextSibling.innerText}#` +
-                `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
-                `true\n`);
+        else if (json[i].isWatched === "false") {
+            console.log(json[i].name + " " + json[i].isWatched);
+            json[i].isWatched = "true";
         }
-        fs.writeFileSync(appDataFilePath, newValue, 'utf-8');
 
+        fs.writeFileSync(appDataFilePath, JSON.stringify(json), 'utf-8');
         ipcRenderer.send("mainWindow:reload");
     });
 
     previewButton.addEventListener("click", (e) => {
-        ipcRenderer.send("openWindow:preview", res[0], poster.src);
-        ipcRenderer.send("previewWindow:poster", res[0]);
+        ipcRenderer.send("openWindow:preview", json[i].posterLink);
+        // ipcRenderer.send("previewWindow:poster", res[0]);
     });
 
     deleteButton.addEventListener("click", (e) => {
-        if (confirm(`Are you sure to delete '${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}'`)) {
-            let data = `${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}#` +
-                `${e.target.previousSibling.previousSibling.previousSibling.innerText}#` +
-                `${e.target.previousSibling.previousSibling.innerText}#` +
-                `${e.target.previousSibling.innerText}\n`;
-
-            let path = fs.readFileSync(appDataFilePath, 'utf-8');
-            var newValue;
-            newValue = path.replace(new RegExp(data), '');
-            fs.writeFileSync(appDataFilePath, newValue, 'utf-8');
-
+        if (confirm(`Are you sure to delete '${json[i].name}'`)) {
+            json.splice(i, 1);
+            fs.writeFileSync(appDataFilePath, JSON.stringify(json), 'utf-8');
             e.target.parentNode.parentNode.remove();
         }
     });
 
-    // Movies.push(movie);
     checkMovieCount();
-
-
 }
 
 // lineReader.eachLine(appDataFilePath, function (line, last) {
@@ -336,54 +321,6 @@ for (let i = 0; i < json.length; i++) {
 //     console.log(movie);
 // });
 
-
-
-
-function transferToJson(array) {
-    fs.appendFile(appDataFilePathSave, '[', (err) => {
-        if (err) {
-            console.log("There was a problem saving data.");
-        } else {
-            console.log("Data saved correctly.");
-        }
-    })
-    for (let i = 0; i < array.length; i++) {
-        let text = JSON.stringify(array[i]);
-
-        if (i != array.length - 1) {
-            fs.appendFile(appDataFilePathSave, text + "," + "\n", (err) => {
-                if (err) {
-                    console.log("There was a problem saving data.");
-                } else {
-                    console.log("Data saved correctly.");
-                }
-            })
-        }
-        else {
-            fs.appendFile(appDataFilePathSave, text + '\n' + ']', (err) => {
-                if (err) {
-                    console.log("There was a problem saving data.");
-                } else {
-                    console.log("Data saved correctly.");
-                }
-            })
-        }
-    }
-};
-
-// fs.appendFile(appDataFilePathSave, ']', (err) => {
-//     if (err) {
-//         console.log("There was a problem saving data.");
-//     } else {
-//         console.log("Data saved correctly.");
-//     }
-// });
-
-// function printMovies(movieList){
-//     for (let i = 0; i < movieList.length(); i++){
-//         console.log(movieList[i]);
-//     }
-// }
 
 function checkMovieCount() {
     const container = document.querySelector("#to-watch");

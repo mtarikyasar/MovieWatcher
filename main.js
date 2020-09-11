@@ -64,9 +64,9 @@ app.on('ready', () => {
         const appDataFilePath = path.join(appDataDirPath, 'movieList.json');
         let json = require(appDataFilePath);
 
-        //Create movieList.txt if it doesn't exist
+        //Create movieList.json if it doesn't exist
         if (!fs.existsSync(appDataFilePath)) {
-            fs.writeFile(appDataFilePath, '', function (err) {
+            fs.writeFile(appDataFilePath, '[]', function (err) {
                 if (err) {
                     console.log(err);
                 }
@@ -91,10 +91,12 @@ app.on('ready', () => {
                 movie.name = movieName;
                 movie.director = directorName;
                 movie.year = year;
-                movie.isWatched = cond;
+                if (cond === false) movie.isWatched = "false";
+                else movie.isWatched = "true";
                 movie.imdbRating = response.data.Ratings[0].Value;
                 movie.posterLink = response.data.Poster;
                 
+
                 json.push(movie);
                 text = JSON.stringify(movie);
 
@@ -140,6 +142,7 @@ app.on('ready', () => {
             addWindow = null;
         }
 
+        mainWindow.reload();
         mainWindow.reload();
     });
 
@@ -213,9 +216,9 @@ app.on('ready', () => {
     // Preview Window Events
 
 
-    ipcMain.on("openWindow:preview", (err, movieName, posterLink) => {
+    ipcMain.on("openWindow:preview", (err, posterLink) => {
         //createPreviewWindow(movieNamePos);
-        const win = new BrowserWindow({ width: 400, height: 600, title: movieName });
+        const win = new BrowserWindow({ width: 400, height: 600 });
         win.setResizable(false);
         win.loadURL(posterLink);
     });
