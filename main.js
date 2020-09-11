@@ -1,14 +1,14 @@
 const url = require('url');
 const path = require('path');
 const fs = require('fs');
+const axios = require('axios');
 const { app, BrowserWindow, Menu, ipcMain, dialog, webContents } = require('electron');
 
-let mainWindow, addWindow, searchWindow;
+let mainWindow, addWindow, searchWindow, previewWindow;
 let watchedMovieCount, unwatchedMovieCount;
 
 
 app.on('ready', () => {
-    let previewWindow = new BrowserWindow();
     console.log("Application is running...");
     let done = false; // For checking if search process
     let found;
@@ -60,7 +60,7 @@ app.on('ready', () => {
             fs.mkdirSync(appDataDirPath);
         }
 
-        const appDataFilePath = path.join(appDataDirPath, 'movieList.txt');
+        const appDataFilePath = path.join(appDataDirPath, 'movieList.json');
 
         //Create movieList.txt if it doesn't exist
         if (!fs.existsSync(appDataFilePath)) {
@@ -72,30 +72,64 @@ app.on('ready', () => {
         }
 
         if (movieName || directorName) {
-            console.log(`Movie Name: ${movieName}\n`+`Director Name: ${directorName}\n`+`Release Year: ${year}`)
-            let text = `${movieName}#${directorName}#${year}#${cond}\n`;
+            let movie = {
+                name: "",
+                director: "",
+                year: 0,
+                isWatched: false,
+                imdbRating: 0,
+                posterLink: ""
+            };
+
+            console.log(`Movie Name: ${movieName}\n` + `Director Name: ${directorName}\n` + `Release Year: ${year}`)
+            let text = "";
+            axios.get("http://www.omdbapi.com/?t=" + movieName + "&apikey=43f1f786")
+            .then((response) => {
+                //console.log(response.data.Poster);
+                movie.name = movieName;
+                movie.director = directorName;
+                movie.year = year;
+                movie.isWatched = cond;
+                movie.imdbRating = response.data.Ratings[0].Value;
+                movie.posterLink = response.data.Poster;
+
+                text = JSON.stringify(movie);
+
+                fs.appendFile(appDataFilePath, text, (err) => {
+                    if (err) {
+                        console.log("There was a problem saving data.");
+                    } else {
+                        console.log("Data saved correctly.");
+                    }
+                });
+
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+                
 
             fs.readFile(appDataFilePath, function (err, data) {
                 if (err) throw err;
 
-                if (data.includes(text)) {
-                    const options = {
-                        buttons: ['Close'],
-                        message: `Movie '${movieName}' already exists on the list.`,
-                    }
+                // if (data.includes(text)) {
+                //     const options = {
+                //         buttons: ['Close'],
+                //         message: `Movie '${movieName}' already exists on the list.`,
+                //     }
 
-                    msg = dialog.showMessageBox(null, options);
-                }
+                //     msg = dialog.showMessageBox(null, options);
+                // }
 
-                else {
-                    fs.appendFile(appDataFilePath, text, (err) => {
-                        if (err) {
-                            console.log("There was a problem saving data.");
-                        } else {
-                            console.log("Data saved correctly.");
-                        }
-                    });
-                }
+                // else {
+                    // fs.appendFile(appDataFilePath, text, (err) => {
+                    //     if (err) {
+                    //         console.log("There was a problem saving data.");
+                    //     } else {
+                    //         console.log("Data saved correctly.");
+                    //     }
+                    // });
+                // }
             });
 
             mainWindow.webContents.send("movieList:addItem", movieName, directorName, year, cond);
@@ -175,14 +209,17 @@ app.on('ready', () => {
 
     // Preview Window Events
 
-    ipcMain.on("openWindow:preview", (err, movieNamePos) => {
-        createPreviewWindow(movieNamePos);
-        
-        mainWindow.webContents.on('did-finish-load', () => {
-            mainWindow.webContents.send('message', movieNamePos);
-        });
+
+    ipcMain.on("openWindow:preview", (err, movieName, posterLink) => {
+        //createPreviewWindow(movieNamePos);
+        const win = new BrowserWindow({ width: 400, height: 600, title: movieName });
+        win.setResizable(false);
+        win.loadURL(posterLink);
     });
-    
+
+    // mainWindow.webContents.on('did-finish-load', () => {
+    //     mainWindow.webContents.send('message', 'hey');
+    // });
 
     ipcMain.on("previewWindow:close", () => {
         previewWindow.close();
@@ -221,7 +258,7 @@ const mainMenuTemplate = [
                     const options = {
                         buttons: ['Close'],
                         message: `You watched ${watchedMovieCount} movies.\n` +
-                                `You've got ${unwatchedMovieCount} movies to watch.`
+                            `You've got ${unwatchedMovieCount} movies to watch.`
                     }
                     const msg = dialog.showMessageBox(null, options);
                     console.log(msg);

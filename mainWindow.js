@@ -1,5 +1,16 @@
 const lineReader = require("line-reader");
 
+// let Movie = {
+//     name: "",
+//     director: "",
+//     year: 0,
+//     isWatched: false,
+//     imdbRating: 0,
+//     posterLink: ""
+// }
+
+//let Movies = new Array();
+
 function getAppDataPath() {
     switch (process.platform) {
         case "darwin": {
@@ -20,11 +31,30 @@ function getAppDataPath() {
 
 const appDataDirPath = getAppDataPath();
 const appDataFilePath = path.join(appDataDirPath, 'movieList.txt');
+const appDataFilePathSave = path.join(appDataDirPath, 'movieList.json');
+
 checkMovieCount();
+
+fs.appendFile(appDataFilePathSave, '[', (err) => {
+    if (err) {
+        console.log("There was a problem saving data.");
+    } else {
+        console.log("Data saved correctly.");
+    }
+});
 
 lineReader.eachLine(appDataFilePath, function (line, last) {
     let res = line.split('#');
     let cond = res[3];
+
+    let movie = {
+        name: "",
+        director: "",
+        year: 0,
+        isWatched: false,
+        imdbRating: 0,
+        posterLink: ""
+    };
 
     const container = document.querySelector(".container");
     const rowToWatch = document.getElementById("to-watch");
@@ -44,14 +74,35 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
     poster.hidden = true;
     poster.className = "movie-poster";
 
+    
+
     axios.get("http://www.omdbapi.com/?t=" + res[0] + "&apikey=43f1f786")
-    .then((response) => {
-        // console.log(response.data.Poster);
-        poster.src = response.data.Poster;
-    })
-    .catch((err) => {
-        console.log(err);
-    })
+        .then((response) => {
+            //console.log(response.data.Poster);
+            movie.name = res[0] + "," + "\n";
+            movie.director = res[1] + "," + "\n";
+            movie.year = res[2 + "," + "\n"];
+            movie.isWatched = res[3] + "," + "\n";
+            movie.imdbRating = response.data.Ratings[0].Value + "," + "\n";
+            movie.posterLink = response.data.Poster + "\n";
+
+            let text = JSON.stringify(movie) + "," + "\n";
+
+            fs.appendFile(appDataFilePathSave, text, (err) => {
+                if (err) {
+                    console.log("There was a problem saving data.");
+                } else {
+                    console.log("Data saved correctly.");
+                }
+            });
+
+            poster.src = response.data.Poster;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+
+    
 
     const directorName = document.createElement("a");
     directorName.className = "director-name";
@@ -108,26 +159,26 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
     }
 
     but.addEventListener("click", (e) => {
-        let data = `${e.target.nextSibling.innerText}#` + 
-                    `${e.target.nextSibling.nextSibling.innerText}#`+ 
-                    `${e.target.nextSibling.nextSibling.nextSibling.innerText}#`+ 
-                    `${e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText}`;
-        
+        let data = `${e.target.nextSibling.innerText}#` +
+            `${e.target.nextSibling.nextSibling.innerText}#` +
+            `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
+            `${e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText}`;
+
         let path = fs.readFileSync(appDataFilePath, 'utf-8');
         var newValue;
 
         if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "true") {
             newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}#` +
-                                                        `${e.target.nextSibling.nextSibling.innerText}#` +
-                                                        `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
-                                                        `false\n`);
+                `${e.target.nextSibling.nextSibling.innerText}#` +
+                `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
+                `false\n`);
         }
 
         else if (e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText === "false") {
             newValue = path.replace(new RegExp(data), `\n${e.target.nextSibling.innerText}#` +
-                                                        `${e.target.nextSibling.nextSibling.innerText}#` +
-                                                        `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
-                                                        `true\n`);
+                `${e.target.nextSibling.nextSibling.innerText}#` +
+                `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
+                `true\n`);
         }
         fs.writeFileSync(appDataFilePath, newValue, 'utf-8');
 
@@ -135,39 +186,51 @@ lineReader.eachLine(appDataFilePath, function (line, last) {
     });
 
     previewButton.addEventListener("click", (e) => {
-        ipcRenderer.send("openWindow:preview", res[0]);
+        ipcRenderer.send("openWindow:preview", res[0], poster.src);
         ipcRenderer.send("previewWindow:poster", res[0]);
     });
 
     deleteButton.addEventListener("click", (e) => {
         if (confirm(`Are you sure to delete '${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}'`)) {
             let data = `${e.target.previousSibling.previousSibling.previousSibling.previousSibling.innerText}#` +
-                        `${e.target.previousSibling.previousSibling.previousSibling.innerText}#` +
-                        `${e.target.previousSibling.previousSibling.innerText}#` +
-                        `${e.target.previousSibling.innerText}\n`;
+                `${e.target.previousSibling.previousSibling.previousSibling.innerText}#` +
+                `${e.target.previousSibling.previousSibling.innerText}#` +
+                `${e.target.previousSibling.innerText}\n`;
 
             let path = fs.readFileSync(appDataFilePath, 'utf-8');
             var newValue;
             newValue = path.replace(new RegExp(data), '');
             fs.writeFileSync(appDataFilePath, newValue, 'utf-8');
-            
+
             e.target.parentNode.parentNode.remove();
         }
     });
 
+    // Movies.push(movie);
     checkMovieCount();
+    console.log(movie);
 });
+
+fs.appendFile(appDataFilePathSave, ']', (err) => {
+    if (err) {
+        console.log("There was a problem saving data.");
+    } else {
+        console.log("Data saved correctly.");
+    }
+});
+
+// function printMovies(movieList){
+//     for (let i = 0; i < movieList.length(); i++){
+//         console.log(movieList[i]);
+//     }
+// }
 
 function checkMovieCount() {
     const container = document.querySelector("#to-watch");
     const container2 = document.querySelector("#watched");
 
-    let unwatched = container.childElementCount-1;
-    let watched = container2.childElementCount-1;
+    let unwatched = container.childElementCount - 1;
+    let watched = container2.childElementCount - 1;
 
     ipcRenderer.send("key:movieCount", unwatched, watched);
-}
-
-function getMovies(movieName){
-    
 }
