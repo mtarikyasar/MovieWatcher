@@ -1,47 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        />
+        <link rel="stylesheet" href="./assets/css/main.css" />
+        <title>Movie Watcher</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="./assets/css/main.css">
-    <title>Movie Watcher</title>
-</head>
-
-<body style="-webkit-app-region: drag">
-    <div class="container">
-        <br>
-        <button class="addMovie" id="openNewWindowBtn">Add New Movie (⌘+N)</button>
-        <div class="row" id="to-watch">
-            <div>
-                <h2 class="heading">Movies To Watch</h2>
+    <body style="-webkit-app-region: drag">
+        <div class="container">
+            <br />
+            <button class="addMovie" id="openNewWindowBtn">
+                Add New Movie (⌘+N)
+            </button>
+            <div class="row" id="to-watch">
+                <div>
+                    <h2 class="heading">Movies To Watch</h2>
+                </div>
+            </div>
+            <div class="row" id="watched">
+                <div>
+                    <h2 class="heading">Watched Movies</h2>
+                </div>
             </div>
         </div>
-        <div class="row" id="watched">
-            <div>
-                <h2 class="heading">Watched Movies</h2>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        const electron = require("electron");
-        const { ipcRenderer } = electron;
+        <script>
+            const electron = require("electron");
+            const { ipcRenderer } = electron;
 
-        let inputValue = document.querySelector("#value");
-        let openNewWindow = document.querySelector("#openNewWindowBtn");
+            let inputValue = document.querySelector("#value");
+            let openNewWindow = document.querySelector("#openNewWindowBtn");
+            let preview = document.querySelector("#preview");
+            let imdb = document.querySelector("#imdb");
 
-        openNewWindow.addEventListener("click", () => {
-            ipcRenderer.send("key:newWindow");
-        });
-    </script>
+            openNewWindow.addEventListener("click", () => {
+                ipcRenderer.send("key:newWindow");
+            });
+        </script>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="main.js"></script>
-    <script src="mainWindow.js"></script>
-    <!-- <script src="./assets/js/preview.js"></script> -->
-</body>
-
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="main.js"></script>
+        <script src="mainWindow.js"></script>
+        <script src="./assets/js/preview.js"></script>
+    </body>
 </html>

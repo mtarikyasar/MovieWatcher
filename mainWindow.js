@@ -1,20 +1,12 @@
-const lineReader = require("line-reader");
-
-// let Movie = {
-//     name: "",
-//     director: "",
-//     year: 0,
-//     isWatched: false,
-//     imdbRating: 0,
-//     posterLink: ""
-// }
-
-//let Movies = new Array();
-
 function getAppDataPath() {
     switch (process.platform) {
         case "darwin": {
-            return path.join(process.env.HOME, "Library", "Application Support", "MovieWatcher");
+            return path.join(
+                process.env.HOME,
+                "Library",
+                "Application Support",
+                "MovieWatcher"
+            );
         }
         case "win32": {
             return path.join(process.env.APPDATA, "MovieWatcher");
@@ -30,11 +22,9 @@ function getAppDataPath() {
 }
 
 const appDataDirPath = getAppDataPath();
-const appDataFilePath = path.join(appDataDirPath, 'movieList.json');
+const appDataFilePath = path.join(appDataDirPath, "movieList.json");
 
 checkMovieCount();
-let MovieArray = [];
-
 let json = require(appDataFilePath);
 
 for (let i = 0; i < json.length; i++) {
@@ -71,14 +61,21 @@ for (let i = 0; i < json.length; i++) {
     watchSit.innerText = json[i].isWatched;
     watchSit.hidden = true;
 
+    const imdbRating = document.createElement("a");
+    imdbRating.className = "imdbRating";
+    imdbRating.id = "imdb";
+    imdbRating.hidden = true;
+    imdbRating.innerText = json[i].imdbRating;
+
     const previewButton = document.createElement("button");
-    previewButton.className = "previewButton fa fa-eye"
+    previewButton.className = "previewButton fa fa-eye";
+    previewButton.id = "preview";
 
     const but = document.createElement("button");
     const deleteButton = document.createElement("button");
     deleteButton.className = "deleteButton fa fa-trash-o";
 
-    if (cond === 'true') {
+    if (cond === "true") {
         but.innerText = "✘";
         but.className = "change-section cross";
         movies.appendChild(but);
@@ -86,16 +83,15 @@ for (let i = 0; i < json.length; i++) {
         movies.appendChild(movieName);
         movies.appendChild(directorName);
         movies.appendChild(movieYear);
-        // movies.appendChild(watchSit);
+        movies.appendChild(imdbRating);
+        movies.appendChild(watchSit);
         movies.appendChild(previewButton);
         movies.appendChild(deleteButton);
         watchSection.appendChild(movies);
         rowWatched.appendChild(watchSection);
         container.appendChild(rowToWatch);
         container.appendChild(rowWatched);
-    }
-
-    else if (cond === 'false') {
+    } else if (cond === "false") {
         but.innerText = "✔";
         but.className = "change-section check";
         movies.appendChild(but);
@@ -103,7 +99,8 @@ for (let i = 0; i < json.length; i++) {
         movies.appendChild(movieName);
         movies.appendChild(directorName);
         movies.appendChild(movieYear);
-        // movies.appendChild(watchSit);
+        movies.appendChild(imdbRating);
+        movies.appendChild(watchSit);
         movies.appendChild(previewButton);
         movies.appendChild(deleteButton);
         watchSection.appendChild(movies);
@@ -112,39 +109,34 @@ for (let i = 0; i < json.length; i++) {
         container.appendChild(rowWatched);
     }
 
+    previewButton.addEventListener("mouseover", (e) => {
+        imdbRating.hidden = false;
+    });
+
+    previewButton.addEventListener("mouseout", (e) => {
+        imdbRating.hidden = true;
+    });
+
     but.addEventListener("click", (e) => {
-        console.log(json[i].isWatched);
-        let data = `${e.target.nextSibling.innerText}#` +
-            `${e.target.nextSibling.nextSibling.innerText}#` +
-            `${e.target.nextSibling.nextSibling.nextSibling.innerText}#` +
-            `${e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText}`;
-
-        let path = fs.readFileSync(appDataFilePath, 'utf-8');
-        var newValue;
-
         if (json[i].isWatched === "true") {
-            console.log(json[i].name + " " + json[i].isWatched);
             json[i].isWatched = "false";
-        }
-
-        else if (json[i].isWatched === "false") {
-            console.log(json[i].name + " " + json[i].isWatched);
+        } else if (json[i].isWatched === "false") {
             json[i].isWatched = "true";
         }
 
-        fs.writeFileSync(appDataFilePath, JSON.stringify(json), 'utf-8');
+        fs.writeFileSync(appDataFilePath, JSON.stringify(json), "utf-8");
         ipcRenderer.send("mainWindow:reload");
     });
 
     previewButton.addEventListener("click", (e) => {
         ipcRenderer.send("openWindow:preview", json[i].posterLink);
-        // ipcRenderer.send("previewWindow:poster", res[0]);
+        ipcRenderer.send("previewWindow:poster", json[i].name);
     });
 
     deleteButton.addEventListener("click", (e) => {
         if (confirm(`Are you sure to delete '${json[i].name}'`)) {
             json.splice(i, 1);
-            fs.writeFileSync(appDataFilePath, JSON.stringify(json), 'utf-8');
+            fs.writeFileSync(appDataFilePath, JSON.stringify(json), "utf-8");
             e.target.parentNode.parentNode.remove();
         }
     });

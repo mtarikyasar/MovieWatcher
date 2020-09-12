@@ -1,4 +1,4 @@
-body{
+body {
     background-color: rgb(33, 33, 33);
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
@@ -11,26 +11,26 @@ body{
     display: none;
 }
 
-div .container{
+div .container {
     text-align: center;
 }
 
-.app-name{
+.app-name {
     font-size: 70px;
-    transition: .2s linear;
+    transition: 0.2s linear;
 }
 
-.row{
+.row {
     text-align: center;
 }
 
-.heading{
+.heading {
     background-color: rgb(83, 83, 83);
     color: rgb(255, 255, 255);
     font-size: 40px;
 }
 
-.addMovie{
+.addMovie {
     background-color: rgb(179, 179, 179);
     border: none;
     border-radius: 4px;
@@ -39,19 +39,19 @@ div .container{
     margin: 5px;
     outline: none;
     padding: 14px;
-    transition: .2s;
+    transition: 0.2s;
 }
 
-.addMovie:hover{
+.addMovie:hover {
     background-color: rgb(29, 185, 84);
 }
 
-ul{
+ul {
     list-style: none;
     text-align: left;
 }
 
-li{
+li {
     background-color: rgb(50, 50, 50);
     border-radius: 4px;
     font-size: 24px;
@@ -61,28 +61,35 @@ li{
     width: 91%;
 }
 
-a{
+a {
     color: white;
+    border: 1px wheat;
     margin-right: 10px;
     text-decoration: none;
 }
 
-.movie-name{
+.movie-name {
+    border: violet 1px;
     color: white;
     font-size: 32px;
 }
 
-.director-name{
+.director-name {
+    border-left: 1px white;
     color: rgb(214, 214, 214);
     font-size: 16px;
 }
 
-.movie-year{
+.movie-year {
     color: rgb(214, 214, 214);
     font-size: 16px;
 }
 
-.change-section{
+.imdbRating {
+    color: rgb(214, 214, 214);
+    font-size: 16px;
+}
+.change-section {
     background-color: rgb(33, 33, 33);
     border: none;
     border-radius: 4px;
@@ -93,53 +100,52 @@ a{
     top: 0px;
 }
 
-.check{
-    transition: .2s linear;
+.check {
+    transition: 0.2s linear;
 }
 
-.cross{
-    transition: .2s linear;
+.cross {
+    transition: 0.2s linear;
 }
 
-.check:hover{
-    color: rgb(29, 185, 84);
+.check:hover {
+    color: rgb(0, 255, 89);
 }
 
-.cross:hover{
+.cross:hover {
     color: red;
 }
 
-.previewButton{
+.previewButton {
     background-color: rgb(50, 50, 50);
     border: none;
     border-radius: 4px;
     bottom: 30px;
     color: gray;
     font-size: 24px;
-    left: 650px;
+    left: 91%;
     outline: none;
     position: absolute;
-    transition: .2s linear;
+    transition: 0.2s linear;
 }
 
-.previewButton:hover{
-    color: rgb(94, 94, 245);
-    
+.previewButton:hover {
+    color: rgb(94, 215, 245);
 }
 
-.deleteButton{
+.deleteButton {
     background-color: rgb(50, 50, 50);
     border: none;
     border-radius: 4px;
     bottom: 30px;
     color: gray;
     font-size: 24px;
-    left: 679px;
+    left: 95.5%;
     outline: none;
     position: absolute;
-    transition: .2s linear;
+    transition: 0.2s linear;
 }
 
-.deleteButton:hover{
+.deleteButton:hover {
     color: red;
 }

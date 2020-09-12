@@ -1,4 +1,4 @@
-body{
+body {
     background-color: rgb(33, 33, 33);
 }
 
@@ -12,7 +12,7 @@ div.container {
     text-align: center;
 }
 
-input[type=text]{
+input[type="text"] {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
@@ -23,13 +23,13 @@ input[type=text]{
     width: 100%;
 }
 
-input[type=checkbox]{
+input[type="checkbox"] {
     margin: 30px 0 30px 0;
     transform: scale(4);
     width: 100%;
 }
 
-input[type=submit]{
+input[type="submit"] {
     background-color: rgb(179, 179, 179);
     border: none;
     border-radius: 4px;
@@ -39,14 +39,14 @@ input[type=submit]{
     margin: 4px 0;
     padding: 7px 10px;
     text-align: center;
-    transition: .1s linear;
+    transition: 0.1s linear;
     width: 50%;
 }
 
-#saveBtn:hover{
+#saveBtn:hover {
     background-color: rgb(0, 255, 89);
 }
 
-#cancelBtn:hover{
+#cancelBtn:hover {
     background-color: rgb(255, 17, 0);
 }
