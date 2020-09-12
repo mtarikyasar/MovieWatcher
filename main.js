@@ -151,13 +151,6 @@ app.on("ready", () => {
                 msg = dialog.showMessageBox(null, options);
             }
 
-            // mainWindow.webContents.send(
-            //     "movieList:addItem",
-            //     movieName,
-            //     directorName,
-            //     year,
-            //     cond
-            // );
             addWindow.close();
             addWindow = null;
         }
