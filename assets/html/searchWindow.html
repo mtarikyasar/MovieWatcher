@@ -1,43 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/searchWindow.css">
-    <title>Search Movie</title>
-</head>
-<body>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8 offset-2 text-center add-movie">
-                <input type="text" id="movieName" placeholder="Movie Name">
-                <!-- <input type="text" id="directorName" placeholder="Director Name"> -->
-                <input type="submit" value="Search" id="searchBtn">
-                <input type="submit" value="Cancel" id="cancelBtn">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../css/searchWindow.css" />
+        <title>Search Movie</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 offset-2 text-center add-movie">
+                    <input
+                        type="text"
+                        id="movieName"
+                        placeholder="Movie Name"
+                    />
+                    <input type="submit" value="Search" id="searchBtn" />
+                    <input type="submit" value="Cancel" id="cancelBtn" />
+                </div>
             </div>
         </div>
-    </div>
 
+        <script>
+            const electron = require("electron");
+            const { ipcRenderer } = electron;
 
-    <script>
-        const electron = require("electron");
-        const { ipcRenderer } = electron;
+            let cancelBtn = document.querySelector("#cancelBtn");
+            let searchBtn = document.querySelector("#searchBtn");
 
-        let cancelBtn = document.querySelector("#cancelBtn");
-        let searchBtn = document.querySelector("#searchBtn");
+            let movieName = document.querySelector("#movieName");
+            let directorName = document.querySelector("#directorName");
 
-        let movieName = document.querySelector("#movieName");
-        let directorName = document.querySelector("#directorName");
-        
-        cancelBtn.addEventListener("click", () => {
-            ipcRenderer.send("searchWindow:close");
-        });
-        
-        if(searchBtn){
-            searchBtn.addEventListener("click", () => {
-                ipcRenderer.send("searchWindow:search", movieName.value /*, directorName.value */);
+            cancelBtn.addEventListener("click", () => {
+                ipcRenderer.send("searchWindow:close");
             });
-        };
-    </script>
-</body>
+
+            if (searchBtn) {
+                searchBtn.addEventListener("click", () => {
+                    ipcRenderer.send("searchWindow:search", movieName.value);
+                });
+            }
+        </script>
+    </body>
 </html>

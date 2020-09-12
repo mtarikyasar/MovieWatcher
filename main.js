@@ -9,8 +9,28 @@ let watchedMovieCount, unwatchedMovieCount;
 
 app.on("ready", () => {
     console.log("Application is running...");
-    let done = false; // For checking if search process
-    let found;
+
+    const appDataDirPath = getAppDataPath();
+    const appDataFilePath = path.join(appDataDirPath, "movieList.json");
+
+    //Create movieList.json if it doesn't exist
+    if (!fs.existsSync(appDataFilePath)) {
+        let movie = {
+            name: "",
+            director: "",
+            year: 0,
+            isWatched: false,
+            imdbRating: 0,
+            posterLink: "",
+        };
+        let text = "[" + JSON.stringify(movie) + "]";
+        console.log("movieList.json doesn't exist. Creating...");
+        fs.writeFile(appDataFilePath, text, (err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
+    }
 
     mainWindow = new BrowserWindow({
         webPreferences: {
@@ -53,30 +73,23 @@ app.on("ready", () => {
 
     ipcMain.on("addWindow:save", (err, movieName, directorName, year, cond) => {
         const appDataDirPath = getAppDataPath();
-
-        //Create appDataDir if not exist
-        if (!fs.existsSync(appDataDirPath)) {
-            fs.mkdirSync(appDataDirPath);
-        }
-
         const appDataFilePath = path.join(appDataDirPath, "movieList.json");
+
         let json = require(appDataFilePath);
 
-        //Create movieList.json if it doesn't exist
-        if (!fs.existsSync(appDataFilePath)) {
-            fs.writeFile(appDataFilePath, "[]", function (err) {
-                if (err) {
-                    console.log(err);
+        if (movieName) {
+            let isExist = false;
+
+            for (let i = 0; i < json.length; i++) {
+                if (
+                    json[i].name === movieName &&
+                    json[i].director === directorName
+                ) {
+                    isExist = true;
                 }
-            });
-        }
+            }
 
-        if (movieName || directorName) {
-            let m = json.filter(function (item) {
-                return item.name === movieName;
-            });
-
-            if (m === undefined) {
+            if (!isExist) {
                 let movie = {
                     name: "",
                     director: "",
@@ -91,7 +104,9 @@ app.on("ready", () => {
                         `Director Name: ${directorName}\n` +
                         `Release Year: ${year}`
                 );
+
                 let text = "";
+
                 axios
                     .get(
                         "http://www.omdbapi.com/?t=" +
@@ -99,7 +114,6 @@ app.on("ready", () => {
                             "&apikey=43f1f786"
                     )
                     .then((response) => {
-                        //console.log(response.data.Poster);
                         movie.name = movieName;
                         movie.director = directorName;
                         movie.year = year;
@@ -137,13 +151,13 @@ app.on("ready", () => {
                 msg = dialog.showMessageBox(null, options);
             }
 
-            mainWindow.webContents.send(
-                "movieList:addItem",
-                movieName,
-                directorName,
-                year,
-                cond
-            );
+            // mainWindow.webContents.send(
+            //     "movieList:addItem",
+            //     movieName,
+            //     directorName,
+            //     year,
+            //     cond
+            // );
             addWindow.close();
             addWindow = null;
         }
@@ -164,24 +178,26 @@ app.on("ready", () => {
         searchWindow = null;
     });
 
-    ipcMain.on("searchWindow:search", (err, movie, director) => {
-        const lineReader = require("line-reader");
+    ipcMain.on("key:searchWindow", () => {
+        createSearchWindow();
+    });
+
+    ipcMain.on("searchWindow:search", (err, movieName) => {
+        let done = false;
+        let found = false;
         const appDataDirPath = getAppDataPath();
-        const appDataFilePath = path.join(appDataDirPath, "movieList.txt");
+        const appDataFilePath = path.join(appDataDirPath, "movieList.json");
 
-        lineReader.eachLine(appDataFilePath, function (line, last) {
-            let res = line.split("#");
-            let msg;
+        let json = require(appDataFilePath);
 
-            // Director parameter temporarily disabled
-            if (
-                movie === res[0] ||
-                movie === res[0].toLowerCase() /* && director === res[1] */
-            ) {
-                if (res[3] === "true") {
+        for (let i = 0; i < json.length; i++) {
+            if (json[i].name === movieName) {
+                found = true;
+
+                if (json[i].isWatched === "true") {
                     const options = {
                         buttons: ["Close"],
-                        message: `Movie '${res[0]}' exists.\nAnd you watched it.`,
+                        message: `Movie '${json[i].name}' exists.\nAnd you watched it.`,
                     };
 
                     msg = dialog.showMessageBox(null, options);
@@ -189,36 +205,27 @@ app.on("ready", () => {
                 } else {
                     const options = {
                         buttons: ["Close"],
-                        message: `Movie '${res[0]}' exists.\nAnd you haven't watched it.`,
+                        message: `Movie '${json[i].name}' exists.\nAnd you haven't watched it.`,
                     };
 
                     msg = dialog.showMessageBox(null, options);
+                    done = true;
                 }
-
-                found = true;
-                console.log(msg);
             }
-        });
-
-        if (found !== true) {
-            found = false;
         }
 
-        done = true;
+        if (done === true && found === false) {
+            const options = {
+                buttons: ["Close"],
+                message: `Movie ${movieName} doesn't exist on the list.`,
+            };
+
+            const msg = dialog.showMessageBox(null, options);
+        }
+
         searchWindow.close();
         searchWindow = null;
     });
-
-    if (done === true && found === false) {
-        const options = {
-            buttons: ["Close"],
-            message: `Movie doesn't exist on the list.`,
-        };
-
-        const msg = dialog.showMessageBox(null, options);
-        console.log(msg);
-    }
-
     // Preview Window Events
 
     ipcMain.on("openWindow:preview", (err, posterLink) => {

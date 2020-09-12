@@ -14,9 +14,15 @@
     <body style="-webkit-app-region: drag">
         <div class="container">
             <br />
-            <button class="addMovie" id="openNewWindowBtn">
-                Add New Movie (⌘+N)
-            </button>
+            <div class="action-buttons">
+                <button class="addMovie" id="openNewWindowBtn">
+                    Add New Movie (⌘+N)
+                </button>
+                <button
+                    class="fa fa-search searchMovie"
+                    id="searchMovieBtn"
+                ></button>
+            </div>
             <div class="row" id="to-watch">
                 <div>
                     <h2 class="heading">Movies To Watch</h2>
@@ -37,9 +43,14 @@
             let openNewWindow = document.querySelector("#openNewWindowBtn");
             let preview = document.querySelector("#preview");
             let imdb = document.querySelector("#imdb");
+            let search = document.querySelector("#searchMovieBtn");
 
             openNewWindow.addEventListener("click", () => {
                 ipcRenderer.send("key:newWindow");
+            });
+
+            search.addEventListener("click", () => {
+                ipcRenderer.send("key:searchWindow");
             });
         </script>
 

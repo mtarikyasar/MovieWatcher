@@ -30,6 +30,10 @@ div .container {
     font-size: 40px;
 }
 
+.action-buttons {
+    position: relative;
+}
+
 .addMovie {
     background-color: rgb(179, 179, 179);
     border: none;
@@ -44,6 +48,20 @@ div .container {
 
 .addMovie:hover {
     background-color: rgb(29, 185, 84);
+}
+
+.searchMovie {
+    position: relative;
+    background: none;
+    border: none;
+    color: rgb(179, 179, 179);
+    font-size: 2rem;
+    left: 25%;
+    transition: 0.2s;
+}
+
+.searchMovie:hover {
+    color: rgb(29, 185, 84);
 }
 
 ul {
