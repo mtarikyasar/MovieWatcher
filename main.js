@@ -222,11 +222,9 @@ app.on("ready", () => {
     // Preview Window Events
 
     ipcMain.on("openWindow:preview", (err, posterLink) => {
-        createPreviewWindow(posterLink);
-
-        // const win = new BrowserWindow({ width: 400, height: 600 });
-        // win.setResizable(false);
-        // win.loadURL(posterLink);
+        const win = new BrowserWindow({ width: 400, height: 600 });
+        win.setResizable(false);
+        win.loadURL(posterLink);
     });
 
     ipcMain.on("previewWindow:close", () => {
