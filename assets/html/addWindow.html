@@ -15,16 +15,6 @@
                         id="movieName"
                         placeholder="Movie Name"
                     />
-                    <input
-                        type="text"
-                        id="directorName"
-                        placeholder="Director Name"
-                    />
-                    <input
-                        type="text"
-                        id="movieYear"
-                        placeholder="Release Date"
-                    />
                     <input type="checkbox" id="read-sit" />
                     <input type="submit" value="Add" id="saveBtn" />
                     <input type="submit" value="Cancel" id="cancelBtn" />
@@ -40,8 +30,6 @@
             let saveBtn = document.querySelector("#saveBtn");
 
             let movieName = document.querySelector("#movieName");
-            let directorName = document.querySelector("#directorName");
-            let year = document.querySelector("#movieYear");
             let readSit = document.querySelector("#read-sit");
 
             cancelBtn.addEventListener("click", () => {
@@ -53,8 +41,6 @@
                     ipcRenderer.send(
                         "addWindow:save",
                         movieName.value,
-                        directorName.value,
-                        year.value,
                         readSit.checked
                     );
                 });

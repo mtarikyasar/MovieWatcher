@@ -71,7 +71,7 @@ app.on("ready", () => {
         mainWindow.reload();
     });
 
-    ipcMain.on("addWindow:save", (err, movieName, directorName, year, cond) => {
+    ipcMain.on("addWindow:save", (err, movieName, cond) => {
         const appDataDirPath = getAppDataPath();
         const appDataFilePath = path.join(appDataDirPath, "movieList.json");
 
@@ -81,10 +81,7 @@ app.on("ready", () => {
             let isExist = false;
 
             for (let i = 0; i < json.length; i++) {
-                if (
-                    json[i].name === movieName &&
-                    json[i].director === directorName
-                ) {
+                if (json[i].name === movieName) {
                     isExist = true;
                 }
             }
@@ -99,12 +96,6 @@ app.on("ready", () => {
                     posterLink: "",
                 };
 
-                console.log(
-                    `Movie Name: ${movieName}\n` +
-                        `Director Name: ${directorName}\n` +
-                        `Release Year: ${year}`
-                );
-
                 let text = "";
 
                 axios
@@ -115,8 +106,8 @@ app.on("ready", () => {
                     )
                     .then((response) => {
                         movie.name = movieName;
-                        movie.director = directorName;
-                        movie.year = year;
+                        movie.director = response.data.Director;
+                        movie.year = response.data.Released;
                         if (cond === false) movie.isWatched = "false";
                         else movie.isWatched = "true";
                         movie.imdbRating = response.data.Ratings[0].Value;
@@ -324,7 +315,7 @@ function createAddWindow() {
                 nodeIntegration: true,
             },
             width: 450,
-            height: 380,
+            height: 270,
             frame: false,
             title: "Add Movie",
         });
@@ -369,35 +360,6 @@ function createSearchWindow() {
 
     searchWindow.on("close", () => {
         searchWindow = null;
-    });
-}
-
-function createPreviewWindow(movieName) {
-    const { ipcRenderer } = require("electron");
-
-    previewWindow = new BrowserWindow({
-        webPreferences: {
-            nodeIntegration: true,
-        },
-        width: 400,
-        height: 700,
-        backgroundColor: "#FFF",
-        title: movieName,
-    });
-
-    previewWindow.setResizable(false);
-
-    ipcRenderer.send("key:previewMovieDetails", movieName);
-    previewWindow.loadURL(
-        url.format({
-            pathname: path.join(__dirname, "/assets/html/previewWindow.html"),
-            protocol: "file:",
-            slashes: true,
-        })
-    );
-
-    previewWindow.on("close", () => {
-        previewWindow = null;
     });
 }
 
