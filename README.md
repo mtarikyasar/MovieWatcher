@@ -5,5 +5,5 @@ I used [OMDb API](http://www.omdbapi.com) to get movie details like poster, imdb
 
 ![Main Window Add Movie Button and To Watch Section](/screenshots/MainWindow_ToWatchSection.png)
 ![Main Window and Watched Section](/screenshots/MainWindow_WatchedSection.png)
-![Add Movie Window](/screenshots/AddMovieWindow.png)
+![Add Movie Window](/screenshots/AddMovie.png)
 ![Search Movie Window](/screenshots/SearchWindow.png)
